@@ -1,0 +1,110 @@
+<html>
+<head>
+<title>Student-Rank-Calculator.cpp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #ab51ba;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Student-Rank-Calculator.cpp</font>
+</center></td></tr></table>
+<pre><span class="s0">#include </span><span class="s1">&lt;iostream&gt;</span>
+<span class="s0">#include </span><span class="s1">&lt;fstream&gt;</span>
+<span class="s0">#include </span><span class="s1">&lt;vector&gt;</span>
+<span class="s0">#include </span><span class="s1">&lt;algorithm&gt;</span>
+
+<span class="s2">// Define a Student class</span>
+<span class="s3">class </span><span class="s1">Student {</span>
+<span class="s3">public</span><span class="s1">:</span>
+    <span class="s1">std::string name;</span>
+    <span class="s0">int </span><span class="s1">marksBiology;</span>
+    <span class="s0">int </span><span class="s1">marksPhysics;</span>
+    <span class="s0">int </span><span class="s1">marksChemistry;</span>
+    <span class="s0">int </span><span class="s1">totalMarks;</span>
+    <span class="s0">int </span><span class="s1">schoolRank;  </span><span class="s2">// Add schoolRank member variable</span>
+
+    <span class="s2">// Constructor</span>
+    <span class="s1">Student(</span><span class="s0">const </span><span class="s1">std::string&amp; n, </span><span class="s0">int </span><span class="s1">bio, </span><span class="s0">int </span><span class="s1">phy, </span><span class="s0">int </span><span class="s1">chem)</span>
+        <span class="s1">: name(n), marksBiology(bio), marksPhysics(phy), marksChemistry(chem) {</span>
+        <span class="s2">// Calculate total marks</span>
+        <span class="s1">totalMarks = marksBiology + marksPhysics + marksChemistry;</span>
+    <span class="s1">}</span>
+
+    <span class="s2">// Overload the comparison operator for sorting</span>
+    <span class="s0">bool </span><span class="s3">operator</span><span class="s1">&lt;(</span><span class="s0">const </span><span class="s1">Student&amp; other) </span><span class="s0">const </span><span class="s1">{</span>
+        <span class="s0">return </span><span class="s1">totalMarks &gt; other.totalMarks; </span><span class="s2">// Sort in descending order</span>
+    <span class="s1">}</span>
+<span class="s1">};</span>
+
+<span class="s2">// Define a ClassRank class to store class-specific information</span>
+<span class="s3">class </span><span class="s1">ClassRank {</span>
+<span class="s3">public</span><span class="s1">:</span>
+    <span class="s1">std::string className;</span>
+    <span class="s1">std::vector&lt;Student&gt; students;</span>
+
+    <span class="s2">// Constructor</span>
+    <span class="s1">ClassRank(</span><span class="s0">const </span><span class="s1">std::string&amp; name) : className(name) {}</span>
+
+    <span class="s2">// Function to calculate ranks within the class</span>
+    <span class="s0">void </span><span class="s1">calculateClassRank() {</span>
+        <span class="s1">std::sort(students.begin(), students.end());</span>
+    <span class="s1">}</span>
+<span class="s1">};</span>
+
+<span class="s2">// Function to calculate school rank</span>
+<span class="s0">void </span><span class="s1">calculateSchoolRank(std::vector&lt;ClassRank&gt;&amp; classes) {</span>
+    <span class="s1">std::vector&lt;Student&gt; allStudents;</span>
+
+    <span class="s2">// Merge all students from different classes into one vector</span>
+    <span class="s0">for </span><span class="s1">(</span><span class="s0">const auto</span><span class="s1">&amp; classRank : classes) {</span>
+        <span class="s1">allStudents.insert(allStudents.end(), classRank.students.begin(), classRank.students.end());</span>
+    <span class="s1">}</span>
+
+    <span class="s2">// Sort all students to calculate school rank</span>
+    <span class="s1">std::sort(allStudents.begin(), allStudents.end());</span>
+
+    <span class="s2">// Assign school ranks</span>
+    <span class="s0">for </span><span class="s1">(size_t i = </span><span class="s4">0</span><span class="s1">; i &lt; allStudents.size(); ++i) {</span>
+        <span class="s1">allStudents[i].schoolRank = i + </span><span class="s4">1</span><span class="s1">;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s2">// Function to print and write ranks to a file</span>
+<span class="s0">void </span><span class="s1">printAndWriteRanks(</span><span class="s0">const </span><span class="s1">std::vector&lt;ClassRank&gt;&amp; classes) {</span>
+    <span class="s1">std::ofstream outFile(</span><span class="s5">&quot;ranks.txt&quot;</span><span class="s1">);</span>
+
+    <span class="s0">for </span><span class="s1">(</span><span class="s0">const auto</span><span class="s1">&amp; classRank : classes) {</span>
+        <span class="s1">std::cout &lt;&lt; </span><span class="s5">&quot;Class: &quot; </span><span class="s1">&lt;&lt; classRank.className &lt;&lt; std::endl;</span>
+        <span class="s1">outFile &lt;&lt; </span><span class="s5">&quot;Class: &quot; </span><span class="s1">&lt;&lt; classRank.className &lt;&lt; std::endl;</span>
+
+        <span class="s0">for </span><span class="s1">(size_t i = </span><span class="s4">0</span><span class="s1">; i &lt; classRank.students.size(); ++i) {</span>
+            <span class="s0">const auto</span><span class="s1">&amp; student = classRank.students[i];</span>
+            <span class="s1">std::cout &lt;&lt; </span><span class="s5">&quot;Student: &quot; </span><span class="s1">&lt;&lt; student.name &lt;&lt; </span><span class="s5">&quot;, Total Marks: &quot; </span><span class="s1">&lt;&lt; student.totalMarks</span>
+                      <span class="s1">&lt;&lt; </span><span class="s5">&quot;, Class Rank: &quot; </span><span class="s1">&lt;&lt; i + </span><span class="s4">1 </span><span class="s1">&lt;&lt; </span><span class="s5">&quot;, School Rank: &quot; </span><span class="s1">&lt;&lt; student.schoolRank &lt;&lt; std::endl;</span>
+
+            <span class="s1">outFile &lt;&lt; </span><span class="s5">&quot;Student: &quot; </span><span class="s1">&lt;&lt; student.name &lt;&lt; </span><span class="s5">&quot;, Total Marks: &quot; </span><span class="s1">&lt;&lt; student.totalMarks</span>
+                    <span class="s1">&lt;&lt; </span><span class="s5">&quot;, Class Rank: &quot; </span><span class="s1">&lt;&lt; i + </span><span class="s4">1 </span><span class="s1">&lt;&lt; </span><span class="s5">&quot;, School Rank: &quot; </span><span class="s1">&lt;&lt; student.schoolRank &lt;&lt; std::endl;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">std::cout &lt;&lt; std::endl;</span>
+        <span class="s1">outFile &lt;&lt; std::endl;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">outFile.close();</span>
+<span class="s1">}</span>
+
+<span class="s0">int </span><span class="s1">main() {</span>
+    <span class="s2">// ... (rest of the code remains unchanged)</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>
